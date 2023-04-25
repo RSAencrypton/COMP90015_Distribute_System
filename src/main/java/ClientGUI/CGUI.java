@@ -3,9 +3,12 @@ import javax.swing.*;
 //import java.awt.event.*;
 import java.awt.*;
 import Painter.Painter;
+import Painter.ShapeManager;
 
 public class CGUI {
     //    private JTextField strokeField;
+    public static ShapeManager.ShapeType shapeType = ShapeManager.ShapeType.LINE;
+    public static JPanel container;
 
     public CGUI() {
 
@@ -29,14 +32,15 @@ public class CGUI {
         menuBar.add(fileMenu);
         menuBar.add(userMenu);
 
-        JPanel container = new JPanel();
+        container = new JPanel();
         container.setLayout(null);
         container.setBounds(0,0, frame.getWidth(), frame.getHeight());
 
-        JPanel colorBar = new JPanel();
-        colorBar.setBackground(Color.CYAN);
-        colorBar.setBounds(0, 0, 90, container.getHeight());
-        container.add(colorBar);
+        JPanel colorPanel = new JPanel();
+        colorPanel.setBackground(Color.CYAN);
+        colorPanel.setBounds(0, 0, 90, container.getHeight());
+        CreateShapeBtn(colorPanel);
+        container.add(colorPanel);
 
         Painter painter = new Painter();
         painter.setBackground(Color.white);
@@ -54,6 +58,35 @@ public class CGUI {
 
         frame.add(container);
         frame.setVisible(true);
+    }
+
+
+    private void CreateShapeBtn(JPanel panel) {
+        panel.setLayout(null);
+        JButton lineBtn = new JButton();
+        JButton triangleBtn = new JButton();
+        JButton rectangleBtn = new JButton();
+        JButton ovalBtn = new JButton();
+
+        lineBtn.setBounds(5, 520, 40,40);
+        triangleBtn.setBounds(45, 520, 40,40);
+        rectangleBtn.setBounds(5, 560, 40,40);
+        ovalBtn.setBounds(45, 560, 40,40);
+
+        lineBtn.setIcon(new ImageIcon("src\\picture\\line.png"));
+        triangleBtn.setIcon(new ImageIcon("src\\picture\\triangle.png"));
+        rectangleBtn.setIcon(new ImageIcon("src\\picture\\rectangle.png"));
+        ovalBtn.setIcon(new ImageIcon("src\\picture\\oval.png"));
+
+        lineBtn.addActionListener(e -> shapeType = ShapeManager.ShapeType.LINE);
+        triangleBtn.addActionListener(e -> shapeType = ShapeManager.ShapeType.TRIANGLE);
+        rectangleBtn.addActionListener(e -> shapeType = ShapeManager.ShapeType.RECTANGLE);
+        ovalBtn.addActionListener(e -> shapeType = ShapeManager.ShapeType.OVAL);
+
+        panel.add(lineBtn);
+        panel.add(triangleBtn);
+        panel.add(rectangleBtn);
+        panel.add(ovalBtn);
     }
 
 //    private void AddListener() {
@@ -80,4 +113,5 @@ public class CGUI {
         fileMenu.add(saveMenuItem);
         fileMenu.add(saveAsMenuItem);
     }
+
 }
