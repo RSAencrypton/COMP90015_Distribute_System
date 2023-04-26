@@ -9,15 +9,24 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class Painter extends JPanel {
-    private ArrayList<Shape> shapes = new ArrayList<Shape>();
+    private ArrayList<BaseShape> shapes = new ArrayList<BaseShape>();
     private int x, y, endX, endY;
     private Shape curDraw;
 //    private int stroke = 3;
+
 
     public Painter() {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
+                if (CGUI.shapeType == ShapeType.TEXT) {
+                    String text = JOptionPane.showInputDialog("Enter text");
+                    if (text != null) {
+                        shapes.add(new TextShape(e.getX(), e.getY(), text, CGUI.color));
+                        repaint();
+                    }
+                    return;
+                }
                 x = e.getX();
                 y = e.getY();
             }
@@ -26,7 +35,7 @@ public class Painter extends JPanel {
             public void mouseReleased(MouseEvent e) {
                 endX = e.getX();
                 endY = e.getY();
-                shapes.add(new Shape(x, y, endX, endY, CGUI.shapeType));
+                shapes.add(new Shape(x, y, endX, endY, CGUI.shapeType, CGUI.color));
                 curDraw = null;
                 repaint();
             }
@@ -37,38 +46,27 @@ public class Painter extends JPanel {
             public void mouseDragged(MouseEvent e) {
                 endX = e.getX();
                 endY = e.getY();
-                curDraw = new Shape(x, y, endX, endY, CGUI.shapeType);
+                curDraw = new Shape(x, y, endX, endY, CGUI.shapeType, CGUI.color);
                 repaint();
 
             }
         });
     }
 
-    private void drawShape(Shape s, Graphics2D g2d) {
-        switch (s.shapeType) {
-            case LINE -> g2d.drawLine(s.x, s.y, s.endX, s.endY);
-            case OVAL -> g2d.drawOval(s.x, s.y, Math.abs(s.endX - s.x), Math.abs(s.endY - s.y));
-            case TRIANGLE -> {
-                int[] xPoints = {s.x, s.endX, 2 * s.x - s.endX};
-                int[] yPoints = {s.y, s.endY, s.endY};
-                g2d.drawPolygon(xPoints, yPoints, 3);
-            }
-            case RECTANGLE -> g2d.drawRect(Math.min(s.x, s.endX), Math.min(s.y, s.endY), Math.abs(s.endX - s.x), Math.abs(s.endY - s.y));
-        }
 
-    }
+
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         g2d.setStroke(new BasicStroke(3));
-        for (Shape s : shapes) {
-            drawShape(s, g2d);
+        for (BaseShape s : shapes) {
+            PaintManager.drawShape(s, g2d);
         }
 
         if (curDraw != null) {
-            drawShape(curDraw, g2d);
+            PaintManager.drawShape(curDraw, g2d);
         }
     }
 
