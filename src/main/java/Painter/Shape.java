@@ -1,10 +1,11 @@
 package Painter;
 
 import java.awt.*;
+import java.io.Serializable;
 
 ;
 
-public class Shape extends BaseShape{
+public class Shape extends BaseShape implements Serializable {
 
     public int x;
     public int y;

@@ -1,17 +1,19 @@
-package ClientGUI;
+package ServerUI;
 import javax.swing.*;
 //import java.awt.event.*;
 import java.awt.*;
+
+import MsgManager.MsgManager;
 import Painter.*;
 import Painter.Painter;
 
-public class CGUI {
+public class SGUI {
     //    private JTextField strokeField;
-    public static ShapeType shapeType = ShapeType.TEXT;
+    public static ShapeType shapeType = ShapeType.LINE;
     public static JPanel container;
     public static Color color = Color.BLACK;
 
-    public CGUI() {
+    public SGUI() {
 
         UIManager.put("PopupMenu.border", BorderFactory.createLineBorder(Color.BLACK));
         JFrame frame = new JFrame();
@@ -47,6 +49,7 @@ public class CGUI {
         Painter painter = new Painter();
         painter.setBackground(Color.white);
         painter.setBounds(90, 0, 690, container.getHeight());
+        MsgManager.paintPanel = painter;
         container.add(painter);
 
 

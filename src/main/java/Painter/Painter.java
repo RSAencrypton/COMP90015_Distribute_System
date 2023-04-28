@@ -1,6 +1,6 @@
 package Painter;
 
-import ClientGUI.CGUI;
+import ServerUI.SGUI;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +9,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class Painter extends JPanel {
-    private ArrayList<BaseShape> shapes = new ArrayList<BaseShape>();
+    public static ArrayList<BaseShape> shapes = new ArrayList<BaseShape>();
     private int x, y, endX, endY;
     private Shape curDraw;
 //    private int stroke = 3;
@@ -19,10 +19,10 @@ public class Painter extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if (CGUI.shapeType == ShapeType.TEXT) {
+                if (SGUI.shapeType == ShapeType.TEXT) {
                     String text = JOptionPane.showInputDialog("Enter text");
                     if (text != null) {
-                        shapes.add(new TextShape(e.getX(), e.getY(), text, CGUI.color));
+                        shapes.add(new TextShape(e.getX(), e.getY(), text, SGUI.color));
                         repaint();
                     }
                     return;
@@ -35,7 +35,7 @@ public class Painter extends JPanel {
             public void mouseReleased(MouseEvent e) {
                 endX = e.getX();
                 endY = e.getY();
-                shapes.add(new Shape(x, y, endX, endY, CGUI.shapeType, CGUI.color));
+                shapes.add(new Shape(x, y, endX, endY, SGUI.shapeType, SGUI.color));
                 curDraw = null;
                 repaint();
             }
@@ -46,7 +46,7 @@ public class Painter extends JPanel {
             public void mouseDragged(MouseEvent e) {
                 endX = e.getX();
                 endY = e.getY();
-                curDraw = new Shape(x, y, endX, endY, CGUI.shapeType, CGUI.color);
+                curDraw = new Shape(x, y, endX, endY, SGUI.shapeType, SGUI.color);
                 repaint();
 
             }
@@ -78,5 +78,7 @@ public class Painter extends JPanel {
         shapes.clear();
         repaint();
     }
+
+
 
 }
