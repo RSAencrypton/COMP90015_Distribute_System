@@ -5,6 +5,7 @@ public class MsgTest extends MsgBase{
     public String test;
     public MsgTest(String test) {
         this.test = test;
+        this.protoName = "MsgTest";
     }
 }
 

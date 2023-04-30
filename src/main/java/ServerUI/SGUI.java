@@ -2,10 +2,15 @@ package ServerUI;
 import javax.swing.*;
 //import java.awt.event.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import MsgManager.MsgManager;
 import Painter.*;
 import Painter.Painter;
+import Protocol.MsgBase;
+import Protocol.MsgJoinRes;
+import ServerThread.ServerThread;
 
 public class SGUI {
     //    private JTextField strokeField;
@@ -53,13 +58,25 @@ public class SGUI {
         container.add(painter);
 
 
-        JPanel chatPanel = new JPanel();
-        chatPanel.setBackground(Color.PINK);
-        chatPanel.setBounds(780, 0, 520, container.getHeight());
-        container.add(chatPanel);
 
 
+        JTextArea chatArea = new JTextArea();
+        chatArea.setEditable(false);
+        chatArea.setBounds(780, 0, 520, 450);
+        chatArea.setBackground(Color.BLUE);
+        container.add(chatArea);
 
+
+        JTextArea inputField = new JTextArea();
+        inputField.setBounds(780, 450, 520, 120);
+        inputField.setBackground(Color.GREEN);
+        inputField.setLineWrap(true);
+        inputField.setWrapStyleWord(true);
+        container.add(inputField);
+
+        JButton sendBtn = new JButton("Send");
+        sendBtn.setBounds(1200,573,80,30);
+        container.add(sendBtn);
 
         frame.add(container);
         frame.setVisible(true);
@@ -98,6 +115,46 @@ public class SGUI {
         panel.add(ovalBtn);
     }
 
+    public static void Tip(String tip) {
+        JOptionPane.showMessageDialog(null, tip);
+    }
+
+    public static void createDialog(String username) {
+        JFrame frame = new JFrame("Simple Dialog");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(300, 200);
+
+        JButton agreeButton = new JButton("Agree");
+        agreeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                MsgBase msg = new MsgJoinRes(Boolean.TRUE);
+                ServerThread.SendMsg(msg);
+                frame.dispose();
+            }
+        });
+
+        JButton rejectButton = new JButton("Reject");
+        rejectButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                MsgBase msg = new MsgJoinRes(Boolean.FALSE);
+                ServerThread.SendMsg(msg);
+                frame.dispose();
+            }
+        });
+
+        Object[] options = {agreeButton, rejectButton};
+        JOptionPane.showOptionDialog(
+                frame,
+                username + "want to join the white board.",
+                "Join Request",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+    }
+
     private void CreateColorBtn(JPanel panel) {
         int posX = 5;
         int posY = 5;
@@ -116,15 +173,6 @@ public class SGUI {
         }
     }
 
-//    private void AddListener() {
-//        strokeField.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                int stroke = Integer.parseInt(strokeField.getText());
-//                if (stroke > 0 && stroke < 10) painter.changeStroke(stroke);
-//            }
-//        });
-//    }
 
     private void createFileBtn(JMenu fileMenu) {
         JMenuItem newMenuItem = new JMenuItem("New");

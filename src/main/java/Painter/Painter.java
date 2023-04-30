@@ -1,5 +1,8 @@
 package Painter;
 
+import Protocol.MsgBase;
+import Protocol.MsgPaint;
+import ServerThread.ServerThread;
 import ServerUI.SGUI;
 
 import javax.swing.*;
@@ -9,7 +12,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class Painter extends JPanel {
-    public static ArrayList<BaseShape> shapes = new ArrayList<BaseShape>();
+    public static ArrayList<BaseShape> shapes = new ArrayList<>();
     private int x, y, endX, endY;
     private Shape curDraw;
 //    private int stroke = 3;
@@ -22,7 +25,10 @@ public class Painter extends JPanel {
                 if (SGUI.shapeType == ShapeType.TEXT) {
                     String text = JOptionPane.showInputDialog("Enter text");
                     if (text != null) {
-                        shapes.add(new TextShape(e.getX(), e.getY(), text, SGUI.color));
+                        TextShape textPoint = new TextShape(e.getX(), e.getY(), text, SGUI.color);
+                        shapes.add(textPoint);
+                        MsgBase msg = new MsgPaint(textPoint);
+                        ServerThread.SendMsg(msg);
                         repaint();
                     }
                     return;
@@ -35,8 +41,11 @@ public class Painter extends JPanel {
             public void mouseReleased(MouseEvent e) {
                 endX = e.getX();
                 endY = e.getY();
+                Shape point = new Shape(x, y, endX, endY, SGUI.shapeType, SGUI.color);
                 shapes.add(new Shape(x, y, endX, endY, SGUI.shapeType, SGUI.color));
                 curDraw = null;
+                MsgBase msg = new MsgPaint(point);
+                ServerThread.SendMsg(msg);
                 repaint();
             }
         });
@@ -69,16 +78,5 @@ public class Painter extends JPanel {
             PaintManager.drawShape(curDraw, g2d);
         }
     }
-
-//    public void changeStroke(int stroke) {
-//        this.stroke = stroke;
-//    }
-
-    public void clear() {
-        shapes.clear();
-        repaint();
-    }
-
-
 
 }

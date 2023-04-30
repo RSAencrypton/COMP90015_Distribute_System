@@ -1,8 +1,9 @@
 package Painter;
 
 import java.awt.*;
+import java.io.Serializable;
 
-public class TextShape extends BaseShape {
+public class TextShape extends BaseShape implements Serializable {
     public int x;
     public int y;
     public String text;
