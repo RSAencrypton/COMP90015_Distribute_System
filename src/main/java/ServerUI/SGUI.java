@@ -1,9 +1,14 @@
 package ServerUI;
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 //import java.awt.event.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 import Main.Main;
 import MsgManager.MsgManager;
@@ -31,7 +36,7 @@ public class SGUI {
         frame.setResizable(false);
 
         JMenuBar menuBar = new JMenuBar();
-        menuBar.setBackground(Color.BLACK);
+        menuBar.setBackground(new Color(200,200,200));
         menuBar.setBorderPainted(false);
         frame.setJMenuBar(menuBar);
 
@@ -163,10 +168,83 @@ public class SGUI {
         openMenuItem.setBorderPainted(false);
         saveMenuItem.setBorderPainted(false);
         saveAsMenuItem.setBorderPainted(false);
+
+        saveMenuItem.addActionListener(e -> SaveFile());
+        saveAsMenuItem.addActionListener(e -> SaveAsFile());
+        openMenuItem.addActionListener(e -> LoadFile());
+
         fileMenu.add(newMenuItem);
         fileMenu.add(openMenuItem);
         fileMenu.add(saveMenuItem);
         fileMenu.add(saveAsMenuItem);
+    }
+
+    private BufferedImage SaveImage() {
+        BufferedImage image = new BufferedImage(MsgManager.paintPanel.getWidth(), MsgManager.paintPanel.getHeight(),
+                BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics = image.createGraphics();
+        MsgManager.paintPanel.paint(graphics);
+        graphics.dispose();
+        return image;
+    }
+
+    private void SaveFile() {
+        BufferedImage image = SaveImage();
+        File output = new File("Image.png");
+        try {
+            ImageIO.write(image, "png", output);
+        }catch (IOException e) {
+            System.out.println("Save file failed");
+        }
+    }
+
+    private void SaveAsFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Save As");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("PNG(*.png)", "png"));
+
+        int result = fileChooser.showSaveDialog(null);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            String path = file.getPath();
+            if (!path.endsWith(".png")) {
+                path += ".png";
+            }
+            File output = new File(path);
+            BufferedImage image = SaveImage();
+            try {
+                ImageIO.write(image, "png", output);
+            }catch (IOException ex) {
+                System.out.println("Save as file failed");
+            }
+        }
+    }
+
+    private void LoadFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Load File");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("PNG(*.png)", "png"));
+
+        int result = fileChooser.showOpenDialog(null);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            String path = file.getPath();
+            BufferedImage image = null;
+            try {
+                image = ImageIO.read(file);
+            }catch (IOException e) {
+                System.out.println("Load file failed");
+            }
+            if (image != null) {
+                LoadImage(image);
+            }
+        }
+    }
+
+    private void LoadImage(BufferedImage Image) {
+        Graphics2D graphics = (Graphics2D) MsgManager.paintPanel.getGraphics();
+        graphics.drawImage(Image, 0, 0, MsgManager.paintPanel.getWidth(), MsgManager.paintPanel.getHeight(), null);
+        graphics.dispose();
     }
 
 }
