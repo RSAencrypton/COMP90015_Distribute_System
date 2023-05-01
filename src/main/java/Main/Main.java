@@ -7,7 +7,7 @@ import ServerThread.ServerThread;
 
 
 public class Main {
-
+    public static String username = "Admin";
     public static void main(String[] args) {
         try {
             int port = 8888;

@@ -61,7 +61,13 @@ public class ServerThread extends Thread{
                 Object res = method.invoke(null, msg);
             }
         }catch (Exception e) {
-            System.out.println("socket closed" + e.getMessage());
+            System.out.println("socket closed " + e.getMessage());
+            try {
+                socket.close();
+                outputStream = null;
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
 }

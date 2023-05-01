@@ -5,10 +5,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import Main.Main;
 import MsgManager.MsgManager;
 import Painter.*;
 import Painter.Painter;
 import Protocol.MsgBase;
+import Protocol.MsgChat;
 import Protocol.MsgJoinRes;
 import ServerThread.ServerThread;
 
@@ -16,6 +18,7 @@ public class SGUI {
     //    private JTextField strokeField;
     public static ShapeType shapeType = ShapeType.LINE;
     public static JPanel container;
+    public static JTextArea chatArea;
     public static Color color = Color.BLACK;
 
     public SGUI() {
@@ -57,13 +60,12 @@ public class SGUI {
         MsgManager.paintPanel = painter;
         container.add(painter);
 
-
-
-
-        JTextArea chatArea = new JTextArea();
+        chatArea = new JTextArea();
         chatArea.setEditable(false);
         chatArea.setBounds(780, 0, 520, 450);
-        chatArea.setBackground(Color.BLUE);
+        chatArea.setBackground(new Color(240, 240, 240));
+        chatArea.setLineWrap(true);
+        chatArea.setWrapStyleWord(true);
         container.add(chatArea);
 
 
@@ -77,6 +79,20 @@ public class SGUI {
         JButton sendBtn = new JButton("Send");
         sendBtn.setBounds(1200,573,80,30);
         container.add(sendBtn);
+
+        sendBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String content = inputField.getText();
+                if (content.equals("")) {
+                    return;
+                }
+                chatArea.append(Main.username + "\n");
+                chatArea.append(content + "\n" + "\n");
+                inputField.setText("");
+                ServerThread.SendMsg(new MsgChat(content));
+            }
+        });
 
         frame.add(container);
         frame.setVisible(true);
@@ -117,42 +133,6 @@ public class SGUI {
 
     public static void Tip(String tip) {
         JOptionPane.showMessageDialog(null, tip);
-    }
-
-    public static void createDialog(String username) {
-        JFrame frame = new JFrame("Simple Dialog");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(300, 200);
-
-        JButton agreeButton = new JButton("Agree");
-        agreeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                MsgBase msg = new MsgJoinRes(Boolean.TRUE);
-                ServerThread.SendMsg(msg);
-                frame.dispose();
-            }
-        });
-
-        JButton rejectButton = new JButton("Reject");
-        rejectButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                MsgBase msg = new MsgJoinRes(Boolean.FALSE);
-                ServerThread.SendMsg(msg);
-                frame.dispose();
-            }
-        });
-
-        Object[] options = {agreeButton, rejectButton};
-        JOptionPane.showOptionDialog(
-                frame,
-                username + "want to join the white board.",
-                "Join Request",
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.INFORMATION_MESSAGE,
-                null,
-                options,
-                options[0]
-        );
     }
 
     private void CreateColorBtn(JPanel panel) {
